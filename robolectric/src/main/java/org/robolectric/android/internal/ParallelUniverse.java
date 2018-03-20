@@ -123,7 +123,7 @@ public class ParallelUniverse implements ParallelUniverseInterface {
     if (appManifest.getAndroidManifestFile() != null
         && appManifest.getAndroidManifestFile().exists()) {
       if (!legacyResources
-          && Boolean.parseBoolean(System.getProperty("use_framework_manifest_parser", "false"))) {
+          || Boolean.parseBoolean(System.getProperty("use_framework_manifest_parser", "false"))) {
         // FsFile packageFile = appManifest.getAndroidManifestFile();
         // todo get elsewhere?
         FsFile packageFile = Fs.fromURL(getClass().getResource("/resources.ap_"));

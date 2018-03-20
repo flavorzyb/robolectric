@@ -78,63 +78,63 @@ public class ShadowPackageParser {
    * other framework versions if we move to a model that mirrors what the framework expects, e.g:
    * the AndroidManifest.xml at the root of the resources.ap_
    */
-  @Implementation(minSdk = Build.VERSION_CODES.JELLY_BEAN, maxSdk = Build.VERSION_CODES.KITKAT)
-  public Package parsePackage(
-      File sourceFile, String destCodePath, DisplayMetrics metrics, int flags) {
-    mParseError = PackageManager.INSTALL_SUCCEEDED;
-
-    XmlResourceParser parser = null;
-    AssetManager assmgr = null;
-    Resources res = null;
-    boolean assetError = true;
-    try {
-      assmgr = new AssetManager();
-      int cookie = mArchiveSourcePath != null ? assmgr.addAssetPath(mArchiveSourcePath) : 1;
-      if (cookie != 0) {
-        res = new Resources(assmgr, metrics, null);
-        parser = assmgr.openXmlResourceParser(cookie, MANIFEST_FILE);
-        assetError = false;
-      } else {
-        Slog.w(TAG, "Failed adding asset path:" + mArchiveSourcePath);
-      }
-    } catch (Exception e) {
-      Slog.w(TAG, "Unable to read AndroidManifest.xml of " + mArchiveSourcePath, e);
-    }
-    if (assetError) {
-      if (assmgr != null) {
-        assmgr.close();
-      }
-      mParseError = PackageManager.INSTALL_PARSE_FAILED_BAD_MANIFEST;
-      throw new RuntimeException("Failed to parse Manifest");
-    }
-    String[] errorText = new String[1];
-    Package pkg = null;
-    try {
-      pkg =
-          directlyOn(
-              realObject,
-              PackageParser.class,
-              "parsePackage",
-              ReflectionHelpers.ClassParameter.from(Resources.class, res),
-              ReflectionHelpers.ClassParameter.from(XmlResourceParser.class, parser),
-              ReflectionHelpers.ClassParameter.from(int.class, flags),
-              ReflectionHelpers.ClassParameter.from(String[].class, errorText));
-    } catch (Exception e) {
-      mParseError = INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION;
-      throw new RuntimeException("Failed to parse Manifest", e);
-    }
-
-    if (pkg == null) {
-      parser.close();
-      assmgr.close();
-      throw new RuntimeException("Failed to parse Manifest" + errorText[0]);
-    }
-
-    parser.close();
-    assmgr.close();
-
-    return pkg;
-  }
+  // @Implementation(minSdk = Build.VERSION_CODES.JELLY_BEAN, maxSdk = Build.VERSION_CODES.KITKAT)
+  // public Package parsePackage(
+  //     File sourceFile, String destCodePath, DisplayMetrics metrics, int flags) {
+  //   mParseError = PackageManager.INSTALL_SUCCEEDED;
+  //
+  //   XmlResourceParser parser = null;
+  //   AssetManager assmgr = null;
+  //   Resources res = null;
+  //   boolean assetError = true;
+  //   try {
+  //     assmgr = new AssetManager();
+  //     int cookie = mArchiveSourcePath != null ? assmgr.addAssetPath(mArchiveSourcePath) : 1;
+  //     if (cookie != 0) {
+  //       res = new Resources(assmgr, metrics, null);
+  //       parser = assmgr.openXmlResourceParser(cookie, MANIFEST_FILE);
+  //       assetError = false;
+  //     } else {
+  //       Slog.w(TAG, "Failed adding asset path:" + mArchiveSourcePath);
+  //     }
+  //   } catch (Exception e) {
+  //     Slog.w(TAG, "Unable to read AndroidManifest.xml of " + mArchiveSourcePath, e);
+  //   }
+  //   if (assetError) {
+  //     if (assmgr != null) {
+  //       assmgr.close();
+  //     }
+  //     mParseError = PackageManager.INSTALL_PARSE_FAILED_BAD_MANIFEST;
+  //     throw new RuntimeException("Failed to parse Manifest");
+  //   }
+  //   String[] errorText = new String[1];
+  //   Package pkg = null;
+  //   try {
+  //     pkg =
+  //         directlyOn(
+  //             realObject,
+  //             PackageParser.class,
+  //             "parsePackage",
+  //             ReflectionHelpers.ClassParameter.from(Resources.class, res),
+  //             ReflectionHelpers.ClassParameter.from(XmlResourceParser.class, parser),
+  //             ReflectionHelpers.ClassParameter.from(int.class, flags),
+  //             ReflectionHelpers.ClassParameter.from(String[].class, errorText));
+  //   } catch (Exception e) {
+  //     mParseError = INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION;
+  //     throw new RuntimeException("Failed to parse Manifest", e);
+  //   }
+  //
+  //   if (pkg == null) {
+  //     parser.close();
+  //     assmgr.close();
+  //     throw new RuntimeException("Failed to parse Manifest" + errorText[0]);
+  //   }
+  //
+  //   parser.close();
+  //   assmgr.close();
+  //
+  //   return pkg;
+  // }
 
   @Implementation
   public Bundle parseMetaData(
@@ -212,65 +212,65 @@ public class ShadowPackageParser {
    * See comment on
    * {@link #parsePackage(java.io.File, java.lang.String, android.util.DisplayMetrics, int)}
    */
-  @Implementation(minSdk = Build.VERSION_CODES.LOLLIPOP)
-  public Package parseBaseApk(File apkFile, AssetManager assets, int flags) {
-    final String apkPath = apkFile.getAbsolutePath();
-
-    mParseError = PackageManager.INSTALL_SUCCEEDED;
-    mArchiveSourcePath = apkFile.getAbsolutePath();
-
-    final int cookie = 0;
-
-    Resources res = null;
-    XmlResourceParser parser = null;
-    try {
-      res = new Resources(assets, new DisplayMetrics(), null);
-
-      parser = assets.openXmlResourceParser(cookie, MANIFEST_FILE);
-      final String[] outError = new String[1];
-      final Package pkg;
-      if (RuntimeEnvironment.getApiLevel() >= Build.VERSION_CODES.O) {
-        pkg =
-            directlyOn(
-                realObject,
-                PackageParser.class,
-                "parseBaseApk",
-                ReflectionHelpers.ClassParameter.from(String.class, apkFile.getAbsolutePath()),
-                ReflectionHelpers.ClassParameter.from(Resources.class, res),
-                ReflectionHelpers.ClassParameter.from(XmlResourceParser.class, parser),
-                ReflectionHelpers.ClassParameter.from(int.class, flags),
-                ReflectionHelpers.ClassParameter.from(String[].class, outError));
-      } else {
-        pkg =
-            directlyOn(
-                realObject,
-                PackageParser.class,
-                "parseBaseApk",
-                ReflectionHelpers.ClassParameter.from(Resources.class, res),
-                ReflectionHelpers.ClassParameter.from(XmlResourceParser.class, parser),
-                ReflectionHelpers.ClassParameter.from(int.class, flags),
-                ReflectionHelpers.ClassParameter.from(String[].class, outError));
-      }
-
-      if (pkg == null) {
-        throw new Exception(
-            "Parse error at " + parser.getPositionDescription() + "): " + outError[0]);
-      }
-
-      pkg.baseCodePath = apkPath;
-
-      return pkg;
-    } catch (Exception e) {
-      throw new RuntimeException(
-          "Failed to read manifest from "
-              + apkPath
-              + "Error code: "
-              + INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION,
-          e);
-    } finally {
-      IoUtils.closeQuietly(parser);
-    }
-  }
+  // @Implementation(minSdk = Build.VERSION_CODES.LOLLIPOP)
+  // public Package parseBaseApk(File apkFile, AssetManager assets, int flags) {
+  //   final String apkPath = apkFile.getAbsolutePath();
+  //
+  //   mParseError = PackageManager.INSTALL_SUCCEEDED;
+  //   mArchiveSourcePath = apkFile.getAbsolutePath();
+  //
+  //   final int cookie = 0;
+  //
+  //   Resources res = null;
+  //   XmlResourceParser parser = null;
+  //   try {
+  //     res = new Resources(assets, new DisplayMetrics(), null);
+  //
+  //     parser = assets.openXmlResourceParser(cookie, MANIFEST_FILE);
+  //     final String[] outError = new String[1];
+  //     final Package pkg;
+  //     if (RuntimeEnvironment.getApiLevel() >= Build.VERSION_CODES.O) {
+  //       pkg =
+  //           directlyOn(
+  //               realObject,
+  //               PackageParser.class,
+  //               "parseBaseApk",
+  //               ReflectionHelpers.ClassParameter.from(String.class, apkFile.getAbsolutePath()),
+  //               ReflectionHelpers.ClassParameter.from(Resources.class, res),
+  //               ReflectionHelpers.ClassParameter.from(XmlResourceParser.class, parser),
+  //               ReflectionHelpers.ClassParameter.from(int.class, flags),
+  //               ReflectionHelpers.ClassParameter.from(String[].class, outError));
+  //     } else {
+  //       pkg =
+  //           directlyOn(
+  //               realObject,
+  //               PackageParser.class,
+  //               "parseBaseApk",
+  //               ReflectionHelpers.ClassParameter.from(Resources.class, res),
+  //               ReflectionHelpers.ClassParameter.from(XmlResourceParser.class, parser),
+  //               ReflectionHelpers.ClassParameter.from(int.class, flags),
+  //               ReflectionHelpers.ClassParameter.from(String[].class, outError));
+  //     }
+  //
+  //     if (pkg == null) {
+  //       throw new Exception(
+  //           "Parse error at " + parser.getPositionDescription() + "): " + outError[0]);
+  //     }
+  //
+  //     pkg.baseCodePath = apkPath;
+  //
+  //     return pkg;
+  //   } catch (Exception e) {
+  //     throw new RuntimeException(
+  //         "Failed to read manifest from "
+  //             + apkPath
+  //             + "Error code: "
+  //             + INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION,
+  //         e);
+  //   } finally {
+  //     IoUtils.closeQuietly(parser);
+  //   }
+  // }
 
   /*
    * Only required because framework expects AndroidManifest.xml at the root of the resources file.
