@@ -27,7 +27,7 @@ import org.robolectric.annotation.Config;
 import org.xmlpull.v1.XmlPullParser;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 18) //
+@Config(sdk = Build.VERSION_CODES.P)
 public class ShadowResourcesTest {
   private Resources resources;
 

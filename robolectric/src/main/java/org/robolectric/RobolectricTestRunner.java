@@ -510,7 +510,8 @@ public class RobolectricTestRunner extends SandboxTestRunner {
     }
 
     return new AndroidManifest(manifestIdentifier.getManifestFile(), manifestIdentifier.getResDir(),
-        manifestIdentifier.getAssetDir(), libraryManifests, manifestIdentifier.getPackageName());
+        manifestIdentifier.getAssetDir(), libraryManifests, manifestIdentifier.getPackageName(),
+        manifestIdentifier.getApkFile());
   }
 
 
