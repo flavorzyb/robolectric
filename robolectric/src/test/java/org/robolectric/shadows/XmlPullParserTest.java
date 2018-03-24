@@ -22,7 +22,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.N_MR1)
 public class XmlPullParserTest {
 
   // emulator output:

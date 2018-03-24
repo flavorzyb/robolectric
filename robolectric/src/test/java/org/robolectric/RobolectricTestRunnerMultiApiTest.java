@@ -11,10 +11,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import android.os.Build;
+import android.os.SystemProperties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import javax.annotation.Nonnull;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -40,6 +42,7 @@ public class RobolectricTestRunnerMultiApiTest {
 
   private int numSupportedApis;
   private SdkPicker sdkPicker;
+  private String priorResourcesMode;
 
   @Before
   public void setUp() {
@@ -50,6 +53,18 @@ public class RobolectricTestRunnerMultiApiTest {
     runNotifier = new RunNotifier();
     runNotifier.addListener(runListener);
     sdkPicker = new SdkPicker(properties, APIS_FOR_TEST);
+
+    priorResourcesMode = System.getProperty("robolectric.resourcesMode");
+    System.setProperty("robolectric.resourcesMode", "legacy");
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    if (priorResourcesMode == null) {
+      System.clearProperty("robolectric.resourcesMode");
+    } else {
+      System.setProperty("robolectric.resourcesMode", priorResourcesMode);
+    }
   }
 
   @Test

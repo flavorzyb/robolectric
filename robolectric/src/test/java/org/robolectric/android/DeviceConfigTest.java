@@ -13,7 +13,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.res.Qualifiers;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 26)
 public class DeviceConfigTest {
 
   private Configuration configuration;

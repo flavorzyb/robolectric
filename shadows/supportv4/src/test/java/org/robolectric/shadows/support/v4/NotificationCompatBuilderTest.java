@@ -12,7 +12,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.TestRunnerWithManifest;
 
 @RunWith(TestRunnerWithManifest.class)
-@Config(sdk = 19)
 public class NotificationCompatBuilderTest {
   @Test
   public void addAction__shouldAddActionToNotification() {
